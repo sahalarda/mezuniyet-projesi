@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # Node.js Server (No local MongoDB needed since using Atlas)
+  server:
+    build:
+      context: .
+      target: production
+    container_name: server
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      # Server Configuration
+      PORT: 5001
+      
+      # Database Configuration (MongoDB Atlas)
+      MONGODB_URI: mongodb+srv://sahalarda1:99arda99@bitirme.pxjcx.mongodb.net/?retryWrites=true&w=majority&appName=bitirme
+      
+      # JWT Configuration
+      JWT_SECRET: your_jwt_secret
+      
+      # Email Configuration (Gmail SMTP)
+      SMTP_HOST: smtp.gmail.com
+      EMAIL_PORT: 587
+      SMTP_ADMIN_EMAIL: mdogruca@gmail.com
+      SMTP_PASS: okeg akbp mqwu azrt
+      
+      # Application Configuration
+      BASE_URL: http://localhost:5001
+      
+      # Additional configurations
+      SMTP_USER: mdogruca@gmail.com
+      SMTP_SENDER_NAME: arda-mail
+      ENABLE_ANONYMOUS_USERS: false
+    volumes:
+      - ./uploads:/app/uploads
+
+  # Development Server
+  server-dev:
+    build:
+      context: .
+      target: development
+    container_name: server-dev
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      # Server Configuration
+      PORT: 5001
+      
+      # Database Configuration (MongoDB Atlas)
+      MONGODB_URI: mongodb+srv://sahalarda1:99arda99@bitirme.pxjcx.mongodb.net/?retryWrites=true&w=majority&appName=bitirme
+      
+      # JWT Configuration
+      JWT_SECRET: your_jwt_secret
+      
+      # Email Configuration (Gmail SMTP)
+      SMTP_HOST: smtp.gmail.com
+      EMAIL_PORT: 587
+      SMTP_ADMIN_EMAIL: mdogruca@gmail.com
+      SMTP_PASS: okeg akbp mqwu azrt
+      
+      # Application Configuration
+      BASE_URL: http://localhost:5001
+      
+      # Additional configurations
+      SMTP_USER: mdogruca@gmail.com
+      SMTP_SENDER_NAME: arda-mail
+      ENABLE_ANONYMOUS_USERS: false
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./uploads:/app/uploads
+    profiles:
+      - dev
+
+volumes:
+  mongodb_data:
+
+networks:
+  app-network:
+    driver: bridge 
