@@ -1,0 +1,58 @@
+services:
+  # Frontend Service
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: arda-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=http://159.69.146.213:5001
+    depends_on:
+      - server
+    networks:
+      - app-network
+
+  # Backend Server Service
+  server:
+    build:
+      context: server
+      target: production
+    container_name: arda-server
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      # Server Configuration
+      PORT: 5001
+      
+      # Database Configuration (MongoDB Atlas)
+      MONGODB_URI: mongodb+srv://sahalarda1:99arda99@bitirme.pxjcx.mongodb.net/?retryWrites=true&w=majority&appName=bitirme
+      
+      # JWT Configuration
+      JWT_SECRET: your_jwt_secret
+      
+      # Email Configuration (Gmail SMTP)
+      SMTP_HOST: smtp.gmail.com
+      EMAIL_PORT: 587
+      SMTP_ADMIN_EMAIL: mdogruca@gmail.com
+      SMTP_PASS: okeg akbp mqwu azrt
+      
+      # Application Configuration
+      BASE_URL: http://localhost:5001
+      
+      # Additional configurations
+      SMTP_USER: mdogruca@gmail.com
+      SMTP_SENDER_NAME: arda-mail
+      ENABLE_ANONYMOUS_USERS: false
+    volumes:
+      - ./server/uploads:/app/uploads
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge 

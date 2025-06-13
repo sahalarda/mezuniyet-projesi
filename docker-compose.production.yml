@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # Frontend Service
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: arda-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=${VITE_API_URL}
+    depends_on:
+      - server
+    networks:
+      - app-network
+
+  # Backend Server Service
+  server:
+    build:
+      context: server
+      target: production
+    container_name: arda-server
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      # Server Configuration
+      PORT: ${PORT:-5001}
+      NODE_ENV: ${NODE_ENV:-production}
+      
+      # Database Configuration (MongoDB Atlas)
+      MONGODB_URI: ${MONGODB_URI}
+      
+      # JWT Configuration
+      JWT_SECRET: ${JWT_SECRET}
+      
+      # Email Configuration (Gmail SMTP)
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      EMAIL_PORT: ${EMAIL_PORT:-587}
+      SMTP_ADMIN_EMAIL: ${SMTP_ADMIN_EMAIL}
+      SMTP_PASS: ${SMTP_PASS}
+      
+      # Application Configuration
+      BASE_URL: ${BASE_URL:-http://localhost:5001}
+      
+      # Additional configurations
+      SMTP_USER: ${SMTP_USER}
+      SMTP_SENDER_NAME: ${SMTP_SENDER_NAME:-arda-mail}
+      ENABLE_ANONYMOUS_USERS: ${ENABLE_ANONYMOUS_USERS:-false}
+    volumes:
+      - ./server/uploads:/app/uploads
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge 
